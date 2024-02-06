@@ -1,7 +1,6 @@
 "use client";
 import { Button, Callout, Text, TextField } from "@radix-ui/themes";
 import { Controller, useForm } from "react-hook-form";
-import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -12,7 +11,11 @@ import { createIssuesschema } from "@/app/Validschema";
 import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
-import delay from "delay";
+import dynamic from "next/dynamic";
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+});
+
 type IssueForm = z.infer<typeof createIssuesschema>;
 const NewIssuesPage = async () => {
   const [error, setError] = useState("");
@@ -26,7 +29,7 @@ const NewIssuesPage = async () => {
     resolver: zodResolver(createIssuesschema),
   });
   const router = useRouter();
-  await delay(2000);
+
   return (
     <div className="max-w-xl">
       {error.length > 0 && (
