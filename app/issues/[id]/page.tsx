@@ -13,7 +13,6 @@ const IssuedetailPage = async ({ params }: Props) => {
     },
   });
   if (!issue) notFound();
-
   return (
     <div>
       <Heading>{issue.title}</Heading>

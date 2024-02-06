@@ -12,15 +12,21 @@ import { createIssuesschema } from "@/app/Validschema";
 import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
-type IssueForm =  z.infer<typeof createIssuesschema>;
-const NewIssuesPage = () => {
-    const [error, setError] = useState("");
-    const[isSubmitting,setSubmitting]=useState(false)
-  const { register, control, handleSubmit ,formState:{errors}} = useForm<IssueForm>({
+import delay from "delay";
+type IssueForm = z.infer<typeof createIssuesschema>;
+const NewIssuesPage = async () => {
+  const [error, setError] = useState("");
+  const [isSubmitting, setSubmitting] = useState(false);
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IssueForm>({
     resolver: zodResolver(createIssuesschema),
   });
   const router = useRouter();
-  console.log(error);
+  await delay(2000);
   return (
     <div className="max-w-xl">
       {error.length > 0 && (
@@ -34,20 +40,20 @@ const NewIssuesPage = () => {
       <form
         className=" space-y-3"
         onSubmit={handleSubmit(async (data) => {
-            try {
-                setSubmitting(true)
+          try {
+            setSubmitting(true);
             await axios.post("/api/issues", data);
             router.push("/issues");
-            } catch (error) {
-                setSubmitting(false)
+          } catch (error) {
+            setSubmitting(false);
             setError("Something unexpected happened");
           }
         })}
       >
         <TextField.Root>
           <TextField.Input placeholder="Title" {...register("title")} />
-              </TextField.Root>
-              {errors.title && <ErrorMessage>{ errors.title.message}</ErrorMessage>}
+        </TextField.Root>
+        {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
         <Controller
           name="description"
           control={control}
@@ -55,9 +61,13 @@ const NewIssuesPage = () => {
             <SimpleMDE placeholder="Description" {...field} />
           )}
         />
-              {errors.description && <ErrorMessage>{ errors.description.message}</ErrorMessage>}
+        {errors.description && (
+          <ErrorMessage>{errors.description.message}</ErrorMessage>
+        )}
 
-        <Button disabled={isSubmitting}>Submit New Issue {isSubmitting && <Spinner/>}</Button>
+        <Button disabled={isSubmitting}>
+          Submit New Issue {isSubmitting && <Spinner />}
+        </Button>
       </form>
     </div>
   );
