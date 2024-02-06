@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { VscBracketError } from "react-icons/vsc";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createIssuesschema } from "@/app/Validschema";
+import { issuesschema } from "@/app/Validschema";
 import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
@@ -17,8 +17,9 @@ const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
 
-type IssueFormData = z.infer<typeof createIssuesschema>;
-const NewIssuesPage = async ({ issue }: { issue?: Issue }) => {
+type IssueFormData = z.infer<typeof issuesschema>;
+
+const IssueForm = async () => {
   const [error, setError] = useState("");
   const [isSubmitting, setSubmitting] = useState(false);
   const {
@@ -27,7 +28,7 @@ const NewIssuesPage = async ({ issue }: { issue?: Issue }) => {
     handleSubmit,
     formState: { errors },
   } = useForm<IssueFormData>({
-    resolver: zodResolver(createIssuesschema),
+    resolver: zodResolver(issuesschema),
   });
   const router = useRouter();
 
@@ -43,20 +44,22 @@ const NewIssuesPage = async ({ issue }: { issue?: Issue }) => {
       )}
       <form
         className=" space-y-3"
-        onSubmit={handleSubmit(async (data) => {
+        onSubmit={async (data) => {
           try {
             setSubmitting(true);
+            console.log(data);
             await axios.post("/api/issues", data);
             router.push("/issues");
           } catch (error) {
             setSubmitting(false);
+            console.log(error);
             setError("Something unexpected happened");
           }
-        })}
+        }}
       >
         <TextField.Root>
           <TextField.Input
-            defaultValue={issue?.title}
+            // defaultValue={issue?.title}
             placeholder="Title"
             {...register("title")}
           />
@@ -65,7 +68,7 @@ const NewIssuesPage = async ({ issue }: { issue?: Issue }) => {
         <Controller
           name="description"
           control={control}
-          defaultValue={issue?.description}
+          // defaultValue={issue?.description}
           render={({ field }) => (
             <SimpleMDE placeholder="Description" {...field} />
           )}
@@ -75,10 +78,10 @@ const NewIssuesPage = async ({ issue }: { issue?: Issue }) => {
         )}
 
         <Button disabled={isSubmitting}>
-          Submit New Issue {isSubmitting && <Spinner />}
+          {false ? "Edit" : "Submit New Issue"} {isSubmitting && <Spinner />}
         </Button>
       </form>
     </div>
   );
 };
-export default NewIssuesPage;
+export default IssueForm;

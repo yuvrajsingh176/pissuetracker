@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
-import { createIssuesschema } from "../../Validschema";
+import { issuesschema } from "../../Validschema";
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const valid = createIssuesschema.safeParse(body);
+  const valid = issuesschema.safeParse(body);
   if (!valid.success) {
     return NextResponse.json(valid.error.errors, { status: 400 });
   }
