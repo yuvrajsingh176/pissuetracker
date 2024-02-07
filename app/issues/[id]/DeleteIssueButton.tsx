@@ -3,13 +3,16 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 
 import { AlertDialog, Button, Flex } from "@radix-ui/themes";
 import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
+  const router = useRouter();
   return (
     <div>
       <AlertDialog.Root>
         <AlertDialog.Trigger>
-          <Button color="red" className="w-1/2 text-center cursor-pointer">
+          <Button color="red" className="w-1/2 text-center ">
             <MdOutlineDeleteOutline />
             Delete
           </Button>
@@ -26,7 +29,22 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
               </Button>
             </AlertDialog.Cancel>
             <AlertDialog.Action>
-              <Button color="red">Delete</Button>
+            <Button
+  className="cursor-pointer"
+  color="red"
+  onClick={async () => {
+    try {
+      await axios.delete("/api/issues/" + issueId);
+      router.push("/issues");
+      router.refresh();
+    } catch (e) {
+      console.log(e);
+    }
+  }}
+>
+  Delete
+</Button>
+
             </AlertDialog.Action>
           </Flex>
         </AlertDialog.Content>
