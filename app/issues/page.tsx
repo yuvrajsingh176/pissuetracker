@@ -1,10 +1,20 @@
-import {  Table,  } from "@radix-ui/themes";
+import { Table } from "@radix-ui/themes";
 import Link from "next/link";
 import prisma from "@/prisma/client";
 import IssueStatusBadge from "../components/IssueStatusBadge";
 import Issueactions from "./Issueactions";
-const Path = async () => {
-  let issues = await prisma?.issue.findMany();
+import { Status } from "@prisma/client";
+const Path = async ({ searchParams }: { searchParams: { status: Status } }) => {
+  const statuses = Object.values(Status);
+  const status = statuses.includes(searchParams.status)
+    ? searchParams.status
+    : undefined;
+  let issues = await prisma.issue.findMany({
+    where: {
+      status
+    },
+  });
+
   return (
     <div>
       <Issueactions />
@@ -25,7 +35,12 @@ const Path = async () => {
           {issues.map((issue) => (
             <Table.Row key={issue.id}>
               <Table.Cell>
-                <Link href={`/issues/${issue.id}`} className="text-violet-900 hover:underline ">{issue.title}</Link>
+                <Link
+                  href={`/issues/${issue.id}`}
+                  className="text-violet-900 hover:underline "
+                >
+                  {issue.title}
+                </Link>
                 <div className="block md:hidden">
                   <IssueStatusBadge status={issue.status} />
                 </div>
