@@ -23,13 +23,13 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
           >
             <MdOutlineDeleteOutline />
             Delete
-          {isdeleting &&  <Spinner />}
+            {isdeleting && <Spinner />}
           </Button>
         </AlertDialog.Trigger>
         <AlertDialog.Content>
           <AlertDialog.Title>Confirm deletion</AlertDialog.Title>
           <AlertDialog.Description>
-            Are you sure You want to Delete? This action can't be undone.
+            Are you sure You want to Delete? This action can&apos;t be undone.
           </AlertDialog.Description>
           <Flex mt="4" gap="3">
             <AlertDialog.Cancel>
