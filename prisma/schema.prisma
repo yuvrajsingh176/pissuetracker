@@ -3,10 +3,11 @@
 
 generator client {
   provider = "prisma-client-js"
+
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "cockroachdb"
   url      = env("DATABASE_URL")
 }
 
@@ -17,14 +18,14 @@ enum Status {
 }
 
 model Issue {
-  id                Int      @id @default(autoincrement())
-  title             String   @db.VarChar(255)
-  description       String   @db.Text
+  id                String   @id @default(uuid()) @db.Uuid
+  title             String   @db.String(255)
+  description       String   @db.String(255)
   status            Status   @default(OPEN)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  assignedToUserId  String? @db.VarChar(255)
-  assignedToUser    User? @relation(fields: [assignedToUserId],references: [id])
+  createdAt         DateTime @default(now()) @db.Timestamptz
+  updatedAt         DateTime @updatedAt   @db.Timestamptz
+  assignedToUserId  String?  @db.String(255)
+  assignedToUser    User?    @relation(fields: [assignedToUserId], references: [id])
 }
 
 
@@ -34,12 +35,12 @@ model Account {
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
+  refresh_token      String?  @db.String(255)
+  access_token       String?  @db.String(255)
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?  @db.Text
+  id_token           String?  @db.String(255)
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
